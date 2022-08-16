@@ -69,8 +69,7 @@ for images, labels in data_loader:
     counter += samples.shape[0]
     print(f'\r benign samples:', counter, end="")
     # Calculate attacks cost on these samples
-    target = random_targets(label, 10)
-    _, scores = judge_attack.perturb(samples, target)
+    _, scores = judge_attack.perturb(samples)
     all_scores.append(scores)
     if counter > BENIGN_SAMPLE_NUM:
         break
