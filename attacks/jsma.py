@@ -40,7 +40,10 @@ class PatchedJSMA(JSMA):
 
     def perturb(self, x, y=None):
         x, y = self._verify_and_process_inputs(x, y)
-        y = random_targets(y, self.num_classes)
+        with torch.no_grad():
+            outputs = self.predict(x)
+        y = torch.topk(outputs, 2).indices[:, 1]
+        # y = random_targets(y, self.num_classes)
         xadv = x
         batch_size = x.shape[0]
         dim_x = int(np.prod(x.shape[1:]))
