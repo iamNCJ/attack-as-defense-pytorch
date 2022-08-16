@@ -16,7 +16,7 @@ class PatchedJSMA(JSMA):
         max_iters = int(dim_x * self.gamma / 2)
         search_space = x.new_ones(batch_size, dim_x).int()
         curr_step = 0
-        final_steps = torch.ones(batch_size, dtype=torch.int32) * -1
+        final_steps = torch.ones(batch_size, dtype=torch.int32, device=x.device) * -1
         yadv = self._get_predicted_label(xadv)
 
         # Algorithm 1

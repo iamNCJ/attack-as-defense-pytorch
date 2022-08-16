@@ -10,7 +10,7 @@ def random_targets(labels: torch.Tensor, nb_classes: int) -> torch.Tensor:
     :param nb_classes: The number of classes for this model.
     :return: An array holding the randomly-selected target classes, one-hot encoded.
     """
-    result = torch.zeros(labels.shape, dtype=torch.long)
+    result = torch.zeros(labels.shape, dtype=torch.long, device=labels.device)
 
     for class_ind in range(nb_classes):
         other_classes = list(range(nb_classes))

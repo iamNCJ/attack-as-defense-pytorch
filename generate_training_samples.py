@@ -15,7 +15,7 @@ model.load_state_dict(torch.load('./res20-cifar10.pt'))
 model.eval()
 dm = CIFAR10DataModule('data/cifar10/data')
 data_loader = dm.get_data_loader(batch_size=BS, shuffle=False)
-fmodel = fb.PyTorchModel(model, (-10, 10))
+fmodel = fb.PyTorchModel(model, (-10, 10), device='cuda')
 
 judge_attack = PatchedJSMA(model, 10)
 
@@ -25,6 +25,8 @@ for attack_type, attack in ATTACK_DICT.items():
     all_samples = []
     all_scores = []
     for images, labels in data_loader:
+        images = images.to('cuda')
+        labels = labels.to('cuda')
         # Generate
         predictions = fmodel(images).argmax(axis=-1)
         is_correct = predictions == labels
@@ -35,6 +37,8 @@ for attack_type, attack in ATTACK_DICT.items():
         all_samples.append(samples)
         counter += samples.shape[0]
         print(f'\r {attack_type} attacks success:', counter, end="")
+        if samples.shape[0] == 0:
+            continue
 
         # Calculate attacks cost on these samples
         target = random_targets(label, 10)
@@ -46,6 +50,7 @@ for attack_type, attack in ATTACK_DICT.items():
     all_scores = torch.cat(all_scores, dim=0)[:PER_ATTACK_SAMPLE_NUM]
     np.save(SAMPLE_LOCATION / f'{attack_type}_samples.npy', all_samples.cpu().numpy())
     np.save(SAMPLE_LOCATION / f'{attack_type}_cost.npy', all_scores.cpu().numpy())
+    print(f'saved {attack_type} samples and scores')
 
 
 # Benign samples
@@ -54,6 +59,8 @@ counter = 0
 all_samples = []
 all_scores = []
 for images, labels in data_loader:
+    images = images.to('cuda')
+    labels = labels.to('cuda')
     predictions = fmodel(images).argmax(axis=-1)
     is_ok = predictions == labels
     samples = images[is_ok]
