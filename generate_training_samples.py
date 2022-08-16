@@ -7,7 +7,7 @@ from data import CIFAR10DataModule
 
 import foolbox as fb
 
-from attacks import PatchedJSMA
+from attacks import PatchedBIM
 from utils.random_targets import random_targets
 
 model = ResNet20CIFAR10()
@@ -17,7 +17,8 @@ dm = CIFAR10DataModule('data/cifar10/data')
 data_loader = dm.get_data_loader(batch_size=BS, shuffle=False)
 fmodel = fb.PyTorchModel(model, (-10, 10), device='cuda')
 
-judge_attack = PatchedJSMA(model, 10)
+# judge_attack = PatchedJSMA(model, 10)
+judge_attack = PatchedBIM(model)
 
 # Adv samples
 for attack_type, attack in ATTACK_DICT.items():
