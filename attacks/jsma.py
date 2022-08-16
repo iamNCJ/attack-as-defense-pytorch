@@ -39,6 +39,6 @@ class PatchedJSMA(JSMA):
             update_mask = (y == yadv) & (final_steps == -1)
             final_steps[update_mask == 1] = curr_step
 
-        final_steps[y != yadv] = max_iters
+        final_steps[y != yadv] = 500
         xadv = clamp(xadv, min=self.clip_min, max=self.clip_max)
         return xadv, final_steps
