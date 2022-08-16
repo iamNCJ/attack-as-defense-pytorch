@@ -3,9 +3,10 @@ import foolbox as fb
 
 ATTACK_DICT = {
     'fgsm': fb.attacks.FGSM(),
-    'pgd': fb.attacks.PGD(),
+    # 'pgd': fb.attacks.PGD(),
     'bim': fb.attacks.LinfBasicIterativeAttack(),
     'df': fb.attacks.LinfDeepFoolAttack(),
+    'cw': fb.attacks.L2CarliniWagnerAttack()
 }
 
 BS = 32
