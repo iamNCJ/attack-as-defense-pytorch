@@ -8,14 +8,14 @@ from data import CIFAR10DataModule
 import foolbox as fb
 
 from attacks import PatchedBIM
-from utils.random_targets import random_targets
 
 model = ResNet20CIFAR10()
 model.load_state_dict(torch.load('./res20-cifar10.pt'))
 model.eval()
 dm = CIFAR10DataModule('data/cifar10/data')
 data_loader = dm.get_data_loader(batch_size=BS, shuffle=False)
-fmodel = fb.PyTorchModel(model, (-10, 10), device='cuda')
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+fmodel = fb.PyTorchModel(model, (-10, 10), device=device)
 
 # judge_attack = PatchedJSMA(model, 10)
 judge_attack = PatchedBIM(model)
@@ -26,8 +26,8 @@ for attack_type, attack in ATTACK_DICT.items():
     all_samples = []
     all_scores = []
     for images, labels in data_loader:
-        images = images.to('cuda')
-        labels = labels.to('cuda')
+        images = images.to(device)
+        labels = labels.to(device)
         # Generate
         predictions = fmodel(images).argmax(axis=-1)
         is_correct = predictions == labels
@@ -42,8 +42,7 @@ for attack_type, attack in ATTACK_DICT.items():
             continue
 
         # Calculate attacks cost on these samples
-        target = random_targets(label, 10)
-        _, scores = judge_attack.perturb(samples, target)
+        _, scores = judge_attack.perturb(samples)
         all_scores.append(scores)
         if counter > PER_ATTACK_SAMPLE_NUM:
             break
@@ -60,8 +59,8 @@ counter = 0
 all_samples = []
 all_scores = []
 for images, labels in data_loader:
-    images = images.to('cuda')
-    labels = labels.to('cuda')
+    images = images.to(device)
+    labels = labels.to(device)
     predictions = fmodel(images).argmax(axis=-1)
     is_ok = predictions == labels
     samples = images[is_ok]
