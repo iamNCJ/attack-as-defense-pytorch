@@ -8,7 +8,7 @@ ATTACK_DICT = {
     'df': fb.attacks.LinfDeepFoolAttack(),
 }
 
-BS = 16
+BS = 32
 SAMPLE_LOCATION = Path('./samples')
-BENIGN_SAMPLE_NUM = 64
-PER_ATTACK_SAMPLE_NUM = 16
+BENIGN_SAMPLE_NUM = 1000
+PER_ATTACK_SAMPLE_NUM = 250
