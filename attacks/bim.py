@@ -116,7 +116,7 @@ class PatchedBIM(PGDAttack):
     :param targeted: if the attack is targeted.
     """
 
-    def __init__(self, predict, loss_fn=None, eps=0.06, nb_iter=500,
+    def __init__(self, predict, loss_fn=None, eps=0.05, nb_iter=500,
                  eps_iter=0.00006, clip_min=-10., clip_max=10., targeted=False):
         ord = np.inf
         rand_init = False
