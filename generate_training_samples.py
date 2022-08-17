@@ -17,8 +17,8 @@ data_loader = dm.get_data_loader(batch_size=BS, shuffle=False)
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 fmodel = fb.PyTorchModel(model, (-10, 10), device=device)
 
-judge_attack = PatchedBIM(model, 10)
-# judge_attack = PatchedBIM(model)
+# judge_attack = PatchedJSMA(model, 10)
+judge_attack = PatchedBIM(model)
 
 # Adv samples
 for attack_type, attack in ATTACK_DICT.items():
