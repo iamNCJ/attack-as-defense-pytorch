@@ -36,13 +36,14 @@ def perturb_iterative(xvar, yvar, predict, nb_iter, eps, eps_iter, loss_fn,
     else:
         delta = torch.zeros_like(xvar)
 
-    final_steps = torch.ones(xvar.shape[0], dtype=torch.int32, device=xvar.device) * nb_iter
+    INF_SCORE = 2000
+    final_steps = torch.ones(xvar.shape[0], dtype=torch.int32, device=xvar.device) * INF_SCORE
 
     delta.requires_grad_()
     for ii in range(nb_iter):
         outputs = predict(xvar + delta)
         _, yadv = torch.max(outputs, dim=1)
-        update_mask = (yvar != yadv) & (final_steps == nb_iter)
+        update_mask = (yvar != yadv) & (final_steps == INF_SCORE)
         final_steps[update_mask == 1] = ii
         if (yvar != yadv).all():
             break
@@ -115,7 +116,7 @@ class PatchedBIM(PGDAttack):
     :param targeted: if the attack is targeted.
     """
 
-    def __init__(self, predict, loss_fn=None, eps=0.03, nb_iter=500,
+    def __init__(self, predict, loss_fn=None, eps=0.05, nb_iter=500,
                  eps_iter=0.00006, clip_min=-10., clip_max=10., targeted=False):
         ord = np.inf
         rand_init = False
